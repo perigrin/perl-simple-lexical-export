@@ -27,4 +27,27 @@ sub bar { 'bar' }
     is foo(), Source::foo(), 'foo() is Source::foo()';
     is bar(), main::bar(),   'bar() is main::bar()';
 }
+
+{
+    note "lvalue test";
+    use Source qw(cache);
+    is cache(), undef, 'cache initially 0';
+    ok cache() = 1, 'cache = 1';
+    is cache(), 1, "see new value of cache";
+}
+
+{
+    note "lvalue test cont.";
+    use Source qw(cache);
+    is cache(), 1, 'cache initially 1';
+}
+
+{
+    note "private exports";
+    use Source qw(priv);
+    main::ok(Source->can('cache'), 'Source can cache');
+    main::ok(!Source->can('priv'), 'Source cannot priv');
+    is priv(), 'Source::private', 'able to export state sub';
+}
+
 done_testing();
